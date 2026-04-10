@@ -4,6 +4,7 @@ import compression from 'compression';
 import helmet from 'helmet';
 import v1Routes from "./api/v1/index";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import narutoRoutes from "./modules/naruto-characters/narutoCharacter.routes";
 
 
 export const app = express();
@@ -14,6 +15,7 @@ app.use(compression());
 app.use(express.json());
 
 app.use('/api/v1', v1Routes);
+app.use("/naruto-characters", narutoRoutes);
 
 app.use(errorMiddleware);
 
