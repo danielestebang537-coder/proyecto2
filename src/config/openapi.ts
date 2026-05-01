@@ -17,6 +17,20 @@ export const openApiSpec = swaggerJsdoc({
         url: "https://peliculasyseries.onrender.com/api/v1",
         description: "Servidor proc",
       },
+    ],components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "Ingresa el token JWT en formato Bearer",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
     ],
   },
   apis: ["./src/**/*.ts"],
