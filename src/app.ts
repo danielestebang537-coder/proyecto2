@@ -18,7 +18,7 @@ app.use(cors());
 app.use(compression());
 app.use(express.json());
 
-app.use("/docs", swaggerUi.serve,swaggerUi.setup(openApiSpec))
+app.use("/api/v1/docs", swaggerUi.serve,swaggerUi.setup(openApiSpec))
 
 app.use('/api/v1', v1Routes);
 app.use("/naruto-characters", narutoRoutes);
