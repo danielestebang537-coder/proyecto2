@@ -31,7 +31,7 @@ router.post('/register', _AuthController.register);
 
 /**
  * @openapi
- * /api/v1/auth/login:
+ * /auth/login:
  *   post:
  *     summary: Login de usuario
  *     tags: [Auth]
