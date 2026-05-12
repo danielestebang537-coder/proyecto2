@@ -1,28 +1,42 @@
+import { ObjectId } from "mongodb";
 import { AuthRepository } from "./auth.repository";
-import { User } from "../users/users.model";
-import { hashPassword, comparePassword } from "../../libs/bcrypt";
-import { signToken } from "../../libs/jwt";
+import {
+    hashPassword,
+    comparePassword
+} from "../../libs/bcrypt";
+
+import {
+    signToken
+} from "../../libs/jwt";
 
 export class AuthService {
 
-    private repository = new AuthRepository();
+    private repository =
+        new AuthRepository();
 
-    async register(user: User) {
-        const exists = await this.repository.findEmail(user.email);
+    async register(user: any) {
+
+        const exists =
+            await this.repository.findEmail(
+                user.email
+            );
 
         if (exists) {
-            throw new Error('el usuario ya existe');
+            throw new Error(
+                "El usuario ya existe"
+            );
         }
 
-        const hashedPassword = await hashPassword(user.password);
+        user.password =
+            await hashPassword(user.password);
 
-        user.password = hashedPassword;
-        user.role = 'user';
+        user.role = "user";
 
-        const result = await this.repository.create(user);
+        const result =
+            await this.repository.create(user);
 
         const token = signToken({
-            sub: result._id!.toString(),
+            sub: result._id.toString(),
             email: result.email,
             role: result.role
         });
@@ -31,27 +45,40 @@ export class AuthService {
             user: {
                 id: result._id,
                 name: result.name,
-                email:result.email,
+                email: result.email,
                 role: result.role
             },
-            token,
-        }
+            token
+        };
     }
 
-    async login(data: any){
-        const user = await this.repository.findEmail(data.email);
-        if(!user){
-            throw new Error('Usuario no existe');
+    async login(data: any) {
+
+        const user =
+            await this.repository.findEmail(
+                data.email
+            );
+
+        if (!user) {
+            throw new Error(
+                "Usuario no existe"
+            );
         }
 
-        const isValidPassword = await comparePassword(data.password, user.password);
+        const validPassword =
+            await comparePassword(
+                data.password,
+                user.password
+            );
 
-         if(!isValidPassword){
-            throw new Error('Credenciales son invalidas');
+        if (!validPassword) {
+            throw new Error(
+                "Credenciales inválidas"
+            );
         }
 
-         const token = signToken({
-            sub: user._id!.toString(),
+        const token = signToken({
+            sub: user._id.toString(),
             email: user.email,
             role: user.role
         });
@@ -60,11 +87,61 @@ export class AuthService {
             user: {
                 id: user._id,
                 name: user.name,
-                email:user.email,
+                email: user.email,
                 role: user.role
             },
-            token,
-        }
+            token
+        };
     }
 
+    async me(id: string) {
+
+        const user =
+            await this.repository.findById(id);
+
+        if (!user) {
+            throw new Error(
+                "Usuario no encontrado"
+            );
+        }
+
+        const { password, ...rest } = user;
+
+        return rest;
+    }
+
+    async updateProfile(
+        id: string,
+        data: any
+    ) {
+
+        if (data.password) {
+            data.password =
+                await hashPassword(data.password);
+        }
+
+        await this.repository.update(
+            id,
+            data
+        );
+
+        return this.me(id);
+    }
+
+    async deleteAccount(id: string) {
+
+        const result =
+            await this.repository.remove(id);
+
+        if (result.deletedCount === 0) {
+            throw new Error(
+                "Usuario no encontrado"
+            );
+        }
+
+        return {
+            message:
+                "Cuenta eliminada correctamente"
+        };
+    }
 }

@@ -21,9 +21,9 @@ app.use(express.json());
 app.use("/api/v1/docs", swaggerUi.serve,swaggerUi.setup(openApiSpec))
 
 app.use('/api/v1', v1Routes);
-app.use("/naruto-characters", narutoRoutes);
-app.use("/notifications", notificationsRoutes)
-app.use("/audit", auditRoutes)
+app.use("/api/v1/naruto-characters", narutoRoutes);
+app.use("/api/v1/notifications", notificationsRoutes)
+app.use("/api/v1/audit", auditRoutes)
 
 app.use(errorMiddleware);
 

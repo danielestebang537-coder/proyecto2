@@ -1,8 +1,19 @@
 import { Router } from "express";
-import * as controller from "./narutoCharacter.controller";
+
+import * as controller
+from "./narutoCharacter.controller";
+
+import { authMiddleware }
+from "../../libs/jwt";
 
 const router = Router();
 
+/**
+ * @openapi
+ * tags:
+ *   name: NarutoCharacters
+ *   description: Gestión de personajes de Naruto
+ */
 
 /**
  * @openapi
@@ -10,24 +21,58 @@ const router = Router();
  *   post:
  *     summary: Crear personaje
  *     tags: [NarutoCharacters]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           example:
- *             name: Naruto Uzumaki
- *             clan: Uzumaki
- *             village: Konoha
- *             jutsus: ["Rasengan", "Shadow Clone"]
- *             rank: Hokage
- *             age: 17
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - clan
+ *               - village
+ *               - rank
+ *               - age
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Naruto Uzumaki
+ *               clan:
+ *                 type: string
+ *                 example: Uzumaki
+ *               village:
+ *                 type: string
+ *                 example: Konoha
+ *               jutsus:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example:
+ *                   - Rasengan
+ *                   - Shadow Clone
+ *               rank:
+ *                 type: string
+ *                 example: Hokage
+ *               age:
+ *                 type: number
+ *                 example: 17
  *     responses:
  *       201:
  *         description: Personaje creado correctamente
+ *       400:
+ *         description: Datos inválidos
+ *       401:
+ *         description: No autorizado
  *       500:
- *         description: Error al crear personaje
+ *         description: Error interno
  */
-router.post("/", controller.create);
+router.post(
+  "/",
+  authMiddleware,
+  controller.create
+);
 
 /**
  * @openapi
@@ -38,10 +83,22 @@ router.post("/", controller.create);
  *     responses:
  *       200:
  *         description: Lista de personajes
+ *         content:
+ *           application/json:
+ *             example:
+ *               - _id: 68213c4a9f2d
+ *                 name: Naruto Uzumaki
+ *                 clan: Uzumaki
+ *                 village: Konoha
+ *                 rank: Hokage
+ *                 age: 17
  *       500:
- *         description: Error al obtener personajes
+ *         description: Error interno
  */
-router.get("/", controller.getAll);
+router.get(
+  "/",
+  controller.getAll
+);
 
 /**
  * @openapi
@@ -55,7 +112,7 @@ router.get("/", controller.getAll);
  *         required: true
  *         schema:
  *           type: string
- *         example: 64f123abc
+ *         example: 68213c4a9f2d
  *     responses:
  *       200:
  *         description: Personaje encontrado
@@ -64,41 +121,52 @@ router.get("/", controller.getAll);
  *       404:
  *         description: Personaje no encontrado
  *       500:
- *         description: Error al obtener personaje
+ *         description: Error interno
  */
-router.get("/:id", controller.getById);
+router.get(
+  "/:id",
+  controller.getById
+);
 
 /**
  * @openapi
  * /naruto-characters/{id}:
- *   put:
+ *   patch:
  *     summary: Actualizar personaje
  *     tags: [NarutoCharacters]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         example: 64f123abc
+ *         example: 68213c4a9f2d
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           example:
- *             name: Naruto Uzumaki
  *             rank: Hokage
+ *             age: 18
  *     responses:
  *       200:
  *         description: Personaje actualizado correctamente
  *       400:
  *         description: ID inválido
+ *       401:
+ *         description: No autorizado
  *       404:
  *         description: Personaje no encontrado
  *       500:
- *         description: Error al actualizar personaje
+ *         description: Error interno
  */
-router.put("/:id", controller.update);
+router.patch(
+  "/:id",
+  authMiddleware,
+  controller.update
+);
 
 /**
  * @openapi
@@ -106,23 +174,31 @@ router.put("/:id", controller.update);
  *   delete:
  *     summary: Eliminar personaje
  *     tags: [NarutoCharacters]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         example: 64f123abc
+ *         example: 68213c4a9f2d
  *     responses:
  *       200:
  *         description: Personaje eliminado correctamente
  *       400:
  *         description: ID inválido
+ *       401:
+ *         description: No autorizado
  *       404:
  *         description: Personaje no encontrado
  *       500:
- *         description: Error al eliminar personaje
+ *         description: Error interno
  */
-router.delete("/:id", controller.remove);
+router.delete(
+  "/:id",
+  authMiddleware,
+  controller.remove
+);
 
 export default router;

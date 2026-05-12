@@ -1,27 +1,99 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "./auth.service";
 
-
 export class AuthController {
-    private _AuthService = new AuthService();
 
+    private service = new AuthService();
 
-    register = async (req: Request, res: Response, next: NextFunction) => {
+    register = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
         try {
-            const result = await this._AuthService.register(req.body);
+
+            const result =
+                await this.service.register(req.body);
+
             res.status(201).json(result);
-        } catch (error) {
-            next(error)
-        }
-    }
 
-    login = async (req: Request, res: Response, next: NextFunction) => {
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    login = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
         try {
-            const result = await this._AuthService.login(req.body);
-            res.status(200).json(result);
-        } catch (error) {
-            next(error)
-        }
-    }
 
+            const result =
+                await this.service.login(req.body);
+
+            res.status(200).json(result);
+
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    me = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+
+            const user =
+                await this.service.me(
+                    (req as any).user.sub
+                );
+
+            res.status(200).json(user);
+
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    updateProfile = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+
+            const user =
+                await this.service.updateProfile(
+                    (req as any).user.sub,
+                    req.body
+                );
+
+            res.status(200).json(user);
+
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    deleteAccount = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+
+            const result =
+                await this.service.deleteAccount(
+                    (req as any).user.sub
+                );
+
+            res.status(200).json(result);
+
+        } catch (error) {
+            next(error);
+        }
+    };
 }
