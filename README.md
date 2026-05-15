@@ -217,16 +217,6 @@ npm start
 
 ---
 
-## 📸 Vista previa
-
-Puedes agregar aquí capturas de pantalla, gifs o enlaces al despliegue del proyecto.
-
-```md
-![Vista previa](./preview.png)
-```
-
----
-
 ## 📈 Mejoras futuras
 
 Algunas funcionalidades planeadas para próximas versiones:
