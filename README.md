@@ -255,7 +255,7 @@ Si deseas contribuir:
 
 ## 👨‍💻 Autor
 
-Desarrollado por **Ivan Prada**.
+Desarrollado por **Daniel Estaban Rojas**.
 
 - GitHub: https://github.com/danielestebang537-coder
 
